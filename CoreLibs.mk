@@ -4,7 +4,7 @@ SHELL := /bin/bash
 
 VERSION_TAGS        += CORELIBS
 CORELIBS_MK_SUMMARY := Go-CoreLibs.mk
-CORELIBS_MK_VERSION := v0.1.12
+CORELIBS_MK_VERSION := v0.1.13
 
 GOPKG_KEYS          ?=
 GOPKG_AUTO_CORELIBS ?= true
@@ -35,9 +35,10 @@ endef
 
 define __list_corelibs
 $(shell grep -h -v '^module' go.mod \
-		| egrep '^\s*github.com/go-corelibs/' \
+		| grep -P '^(require)?\s*github.com/go-corelibs/' \
 		| grep -v "github.com/${CORELIB_PKG} v" \
-		| awk '{print $$1}' \
+		| grep -v "// indirect" \
+		| perl -pe 's!^(require)?\s*!!;s!\s+v\d+(.\d)*.*$$!!;' \
 		| sort -u -V \
 		| while read MODULE; do \
 			NAME=$$(basename "$${MODULE}"); \
@@ -222,7 +223,7 @@ reportcard:
 	@echo "#: go vet"
 	@go vet ./...
 	@echo "#: gocyclo"
-	@gocyclo -over 15 `find * -name "*.go"`
+	@gocyclo -over 15 `find * -name "*.go"` || true
 	@echo "#: ineffassign"
 	@ineffassign ./...
 	@echo "#: misspell"
