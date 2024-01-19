@@ -91,6 +91,7 @@ func TestPaths(t *testing.T) {
 	Convey("TidyPath", t, func() {
 		m.Lock()
 		defer m.Unlock()
+		So(os.Setenv("PATH", "/usr/bin:/usr/local/bin"), ShouldBeNil)
 		_env = NewImport(os.Environ())
 		actual := os.Getenv("PATH")
 		So(actual, ShouldNotEqual, "")
