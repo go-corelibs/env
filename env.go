@@ -50,6 +50,10 @@ type Env interface {
 	// when the first and last characters are the same and are one of the
 	// following: backtick (&96;), quote (') or double quote (")
 	Import(environment []string)
+	// Include applies all variables within the others to this Env instance.
+	// Note that keys are not deleted and any existing keys are clobbered by
+	// the others, in the order the others are given
+	Include(others ...Env)
 	// Expand replaces all `$key` and `${key}` references in the `input` string
 	// with their corresponding `key` values. Any references not present within
 	// the Env are replaced with empty strings
@@ -167,6 +171,12 @@ func (c *cEnv) Import(environ []string) {
 		}
 	}
 	return
+}
+
+func (c *cEnv) Include(others ...Env) {
+	for _, other := range others {
+		c.Import(other.Environ())
+	}
 }
 
 func (c *cEnv) Expand(input string) (expanded string) {

@@ -90,6 +90,32 @@ func TestEnviron(t *testing.T) {
 		})
 	})
 
+	Convey("Env.Include", t, func() {
+		env := newEnv()
+		So(env, ShouldNotBeNil)
+		env.Set("two", "thing")
+		env.Set("one", "thing")
+		So(env.Len(), ShouldEqual, 2)
+		So(env.Environ(), ShouldEqual, []string{
+			"two=thing", "one=thing",
+		})
+		env0 := env.Clone()
+		env1 := newEnv()
+		env1.Set("one", "overwrite")
+		env0.Include(env1)
+		So(env0.Environ(), ShouldEqual, []string{
+			"two=thing", "one=overwrite",
+		})
+		env2 := newEnv()
+		env2.Set("one", "more")
+		env2.Set("another", "one")
+		env0 = env.Clone()
+		env0.Include(env1, env2)
+		So(env0.Environ(), ShouldEqual, []string{
+			"two=thing", "one=more", "another=one",
+		})
+	})
+
 	Convey("Env.Expand", t, func() {
 		env := New()
 		So(env, ShouldNotBeNil)
