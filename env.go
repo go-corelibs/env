@@ -159,8 +159,11 @@ func (c *cEnv) Import(environ []string) {
 	c.m.Lock()
 	defer c.m.Unlock()
 	for _, input := range environ {
-		if before, after, found := strings.Cut(input, "="); found && before != "" {
-			c.data[before] = clstrings.TrimQuotes(after)
+		if key, value, found := strings.Cut(input, "="); found && key != "" {
+			c.data[key] = clstrings.TrimQuotes(value)
+			if !slices.Within(key, c.order) {
+				c.order = append(c.order, key)
+			}
 		}
 	}
 	return

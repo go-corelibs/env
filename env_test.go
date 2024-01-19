@@ -78,6 +78,18 @@ func TestEnviron(t *testing.T) {
 		So(env.Export(), ShouldNotBeNil)
 	})
 
+	Convey("Env.Import", t, func() {
+		env := newEnv()
+		So(env, ShouldNotBeNil)
+		env.Import([]string{
+			"two=thing", "one=thing",
+		})
+		So(env.Len(), ShouldEqual, 2)
+		So(env.Environ(), ShouldEqual, []string{
+			"two=thing", "one=thing",
+		})
+	})
+
 	Convey("Env.Expand", t, func() {
 		env := New()
 		So(env, ShouldNotBeNil)
