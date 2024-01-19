@@ -19,6 +19,8 @@ import (
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/go-corelibs/path"
 )
 
 func TestEnviron(t *testing.T) {
@@ -114,6 +116,37 @@ func TestEnviron(t *testing.T) {
 		So(env0.Environ(), ShouldEqual, []string{
 			"two=thing", "one=more", "another=one",
 		})
+	})
+
+	Convey("WriteEnvDir", t, func() {
+		env := newEnv()
+		So(env, ShouldNotBeNil)
+		env.Set("two", "thing")
+		env.Set("one", "thing")
+		So(env.Len(), ShouldEqual, 2)
+		So(env.Environ(), ShouldEqual, []string{
+			"two=thing", "one=thing",
+		})
+		tempDir, err := os.MkdirTemp("", "corelibs-path.*.d")
+		So(err, ShouldBeNil)
+		So(tempDir, ShouldNotEqual, "")
+		defer os.RemoveAll(tempDir)
+		err = env.WriteEnvDir(tempDir)
+		So(err, ShouldBeNil)
+		So(path.IsFile(tempDir+"/one"), ShouldBeTrue)
+		var data []byte
+		data, err = os.ReadFile(tempDir + "/one")
+		So(err, ShouldBeNil)
+		So(string(data), ShouldEqual, "thing")
+		So(path.IsFile(tempDir+"/two"), ShouldBeTrue)
+		data, err = os.ReadFile(tempDir + "/two")
+		So(err, ShouldBeNil)
+		So(string(data), ShouldEqual, "thing")
+		So(os.Mkdir(tempDir+"/fail", 0550), ShouldBeNil)
+		So(env.WriteEnvDir(tempDir+"/fail/nope"), ShouldNotBeNil)
+		So(os.Chmod(tempDir+"/fail", 0770), ShouldBeNil) // for cleanup
+		So(os.Chmod(tempDir+"/one", 0440), ShouldBeNil)
+		So(env.WriteEnvDir(tempDir), ShouldNotBeNil) // can't overwrite one file
 	})
 
 	Convey("Env.Expand", t, func() {

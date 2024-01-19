@@ -21,6 +21,7 @@ import (
 	"strings"
 	"sync"
 
+	clpath "github.com/go-corelibs/path"
 	rpl "github.com/go-corelibs/replace"
 	"github.com/go-corelibs/slices"
 	clstrings "github.com/go-corelibs/strings"
@@ -54,6 +55,10 @@ type Env interface {
 	// Note that keys are not deleted and any existing keys are clobbered by
 	// the others, in the order the others are given
 	Include(others ...Env)
+	// WriteEnvDir makes the given directory path if it doesn't exist already
+	// and then for each key/value pair in the Env, creates a file named with
+	// the key and the value as the contents
+	WriteEnvDir(path string) (err error)
 	// Expand replaces all `$key` and `${key}` references in the `input` string
 	// with their corresponding `key` values. Any references not present within
 	// the Env are replaced with empty strings
@@ -177,6 +182,20 @@ func (c *cEnv) Include(others ...Env) {
 	for _, other := range others {
 		c.Import(other.Environ())
 	}
+}
+
+func (c *cEnv) WriteEnvDir(path string) (err error) {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	if err = os.MkdirAll(path, clpath.DefaultPathPerms); err != nil {
+		return
+	}
+	for _, key := range c.order {
+		if err = os.WriteFile(path+"/"+key, []byte(c.data[key]), clpath.DefaultFilePerms); err != nil {
+			return
+		}
+	}
+	return
 }
 
 func (c *cEnv) Expand(input string) (expanded string) {
