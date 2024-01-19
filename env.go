@@ -84,6 +84,14 @@ func New() (env Env) {
 	return
 }
 
+// NewImport constructs a new Env instance and calls Import with the given
+// `environ` slice
+func NewImport(environ []string) (env Env) {
+	env = New()
+	env.Import(environ)
+	return
+}
+
 func newEnv() (env *cEnv) {
 	env = &cEnv{
 		data:  make(map[string]string),
