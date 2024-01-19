@@ -3,6 +3,7 @@ module github.com/go-corelibs/env
 go 1.21.5
 
 require (
+	github.com/go-corelibs/path v1.2.0
 	github.com/go-corelibs/replace v1.2.1
 	github.com/go-corelibs/slices v1.2.0
 	github.com/go-corelibs/strings v1.1.1
@@ -11,8 +12,10 @@ require (
 
 require (
 	github.com/amonsat/fullname_parser v0.0.0-20180221140204-0879740fa92c // indirect
+	github.com/djherbis/times v1.6.0 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-corelibs/diff v1.0.3 // indirect
-	github.com/go-corelibs/maps v1.0.2 // indirect
+	github.com/go-corelibs/maps v1.1.0 // indirect
 	github.com/go-corelibs/maths v1.0.1 // indirect
 	github.com/go-corelibs/strcases v1.0.0 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
@@ -24,7 +27,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/smarty/assertions v1.15.0 // indirect
 	github.com/weppos/publicsuffix-go v0.30.1 // indirect
-	golang.org/x/net v0.12.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 )
