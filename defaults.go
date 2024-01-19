@@ -20,12 +20,8 @@ import (
 )
 
 var (
-	_env Env = New()
+	_env = NewImport(os.Environ())
 )
-
-func init() {
-	_env.Import(os.Environ())
-}
 
 // Default returns a package global Env instance, populated with the existing
 // os.Environ variables
